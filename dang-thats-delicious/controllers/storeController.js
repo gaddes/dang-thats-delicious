@@ -10,8 +10,8 @@ exports.addStore = (req, res) => {
 };
 
 exports.createStore = async (req, res) => {
-    const store = new Store(req.body);
-    await store.save();
-    console.log('It worked!');
+    const store = await (new Store(req.body)).save();
+    req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`)
+    res.redirect(`/store/${store.slug}`);
     // Note: errors are handled within the exports.catchErrors() function in errorHandlers.js - see video 11 @ 12mins for explanation
 };
