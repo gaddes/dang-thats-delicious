@@ -15,3 +15,9 @@ exports.createStore = async (req, res) => {
     res.redirect(`/store/${store.slug}`);
     // Note: errors are handled within the exports.catchErrors() function in errorHandlers.js - see video 11 @ 12mins for explanation
 };
+
+exports.getStores = async (req, res) => {
+    // Query the database for a list of all stores
+    const stores = await Store.find();
+    res.render('stores', { title: 'Stores', stores: stores });
+};
