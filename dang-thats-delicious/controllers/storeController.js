@@ -59,7 +59,6 @@ exports.editStore = async (req, res) => {
     // Find the store given the ID
     const store = await Store.findOne({ _id: req.params.id });
     // Confirm they are the owner of the store
-    // TODO:
     // Render out the edit form so the user can update their store
     res.render('editStore', { title: `Edit ${store.name}`, store: store });
 };
@@ -75,4 +74,10 @@ exports.updateStore = async (req, res) => {
     req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store</a>`);
     // Redirect them to the store and tell them it worked
     res.redirect(`/stores/${store._id}/edit`);
+};
+
+exports.getStoreBySlug = async (req, res, next) => {
+    const store = await Store.findOne({ slug: req.params.slug });
+    if (!store) return next(); // If the store is not found, this will pass on to the next middleware (which in this case is an error handler that will show a 404)
+    res.render('store', { store, title: store.name });
 };
