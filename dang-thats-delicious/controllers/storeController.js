@@ -81,3 +81,9 @@ exports.getStoreBySlug = async (req, res, next) => {
     if (!store) return next(); // If the store is not found, this will pass on to the next middleware (which in this case is an error handler that will show a 404)
     res.render('store', { store, title: store.name });
 };
+
+exports.getStoresByTag = async (req, res) => {
+    const tags = await Store.getTagsList();
+    const tag = req.params.tag;
+    res.render('tag', { tags, title: 'Tags', tag });
+};
