@@ -32,7 +32,13 @@ const storeSchema = new mongoose.Schema({
             required: 'You must supply an address!'
         }
     },
-    photo: String
+    photo: String,
+    // This (author) is going to be the relationship between the Store and the actual User
+    author: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: 'You must supply an author'
+    }
 });
 
 storeSchema.pre('save', async function(next) {
