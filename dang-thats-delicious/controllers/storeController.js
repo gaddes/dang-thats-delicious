@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Store = mongoose.model('Store'); // See Store.js where this is exported!
+const User = mongoose.model('User');
 const multer = require('multer'); // This package allows us to UPLOAD our photos
 const jimp = require('jimp'); // This package allows us to RESIZE our photos
 const uuid = require('uuid'); // This package gives us unique identifiers (i.e. filenames) for each image upload
@@ -140,4 +141,15 @@ exports.mapStores = async (req, res) => {
 
 exports.mapPage = (req, res) => {
     res.render('map', { title: 'Map' });
+};
+
+exports.heartStore = async (req, res) => {
+    const hearts = req.user.hearts.map(obj => obj.toString());
+    const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet';
+    const user = await User
+    .findByIdAndUpdate(req.user._id,
+        { [operator]: { hearts: req.params.id } },
+        { new: true }
+    );
+    res.json(user);
 };
