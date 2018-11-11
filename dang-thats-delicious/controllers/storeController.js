@@ -46,7 +46,7 @@ exports.resize = async (req, res, next) => {
 exports.createStore = async (req, res) => {
     req.body.author = req.user._id; // Take the ID of currently logged-in user and put it into the 'author' field
     const store = await (new Store(req.body)).save();
-    req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`)
+    req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`);
     res.redirect(`/store/${store.slug}`);
     // Note: errors are handled within the exports.catchErrors() function in errorHandlers.js - see video 11 @ 12mins for explanation
 };
@@ -54,7 +54,7 @@ exports.createStore = async (req, res) => {
 exports.getStores = async (req, res) => {
     // Query the database for a list of all stores
     const stores = await Store.find();
-    res.render('stores', { title: 'Stores', stores: stores });
+    res.render('stores', { title: 'Stores', stores });
 };
 
 const confirmOwner = (store, user) => {
@@ -69,7 +69,7 @@ exports.editStore = async (req, res) => {
     // 2. Confirm they are the owner of the store
     confirmOwner(store, req.user);
     // 3. Render out the edit form so the user can update their store
-    res.render('editStore', { title: `Edit ${store.name}`, store: store });
+    res.render('editStore', { title: `Edit ${store.name}`, store });
 };
 
 exports.updateStore = async (req, res) => {
@@ -93,7 +93,7 @@ exports.getStoreBySlug = async (req, res, next) => {
 
 exports.getStoresByTag = async (req, res) => {
     const tag = req.params.tag;
-    const tagQuery = tag || { $exists: true };
+    const tagQuery = tag || { $exists: true, $ne: [] };
     const tagsPromise = Store.getTagsList();
     const storesPromise = Store.find({ tags: tagQuery });
     const [tags, stores] = await Promise.all([tagsPromise, storesPromise]); // Destructure!
