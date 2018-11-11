@@ -86,7 +86,7 @@ exports.updateStore = async (req, res) => {
 };
 
 exports.getStoreBySlug = async (req, res, next) => {
-    const store = await Store.findOne({ slug: req.params.slug }).populate('author');
+    const store = await Store.findOne({ slug: req.params.slug }).populate('author reviews');
     if (!store) return next(); // If the store is not found, this will pass on to the next middleware (which in this case is an error handler that will show a 404)
     res.render('store', { store, title: store.name });
 };

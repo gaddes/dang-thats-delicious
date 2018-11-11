@@ -27,4 +27,13 @@ const reviewSchema = new mongoose.Schema({
     }
 });
 
+function autopopulate(next) {
+    this.populate('author');
+    next();
+};
+
+// This adds hooks for every time someone 'find' or 'findOne' and populate the 'author' field of each of those
+reviewSchema.pre('find', autopopulate);
+reviewSchema.pre('findOne', autopopulate);
+
 module.exports = mongoose.model('Review', reviewSchema);
