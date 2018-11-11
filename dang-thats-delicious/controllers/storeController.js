@@ -134,6 +134,10 @@ exports.mapStores = async (req, res) => {
     // The .select method allows us to specify exactly which fields we do (or don't) want to query
     // It's good practice to keep our Ajax request as slim as possible
     // The .limit method limits to a number (in this case 10) closest results
-    const stores = await Store.find(q).select('slug name description location').limit(10);
+    const stores = await Store.find(q).select('slug name description location photo').limit(10);
     res.json(stores);
+};
+
+exports.mapPage = (req, res) => {
+    res.render('map', { title: 'Map' });
 };
