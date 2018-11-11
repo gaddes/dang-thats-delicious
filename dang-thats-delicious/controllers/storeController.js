@@ -117,3 +117,23 @@ exports.searchStores = async (req, res) => {
     .limit(5);
     res.json(stores);
 };
+
+exports.mapStores = async (req, res) => {
+    const coordinates = [req.query.lng, req.query.lat].map(parseFloat);
+    const q = {
+        location: {
+            $near: {
+                $geometry: {
+                    type: 'Point',
+                    coordinates
+                },
+                $maxDistance: 10000 // 10km
+            }
+        }
+    };
+    // The .select method allows us to specify exactly which fields we do (or don't) want to query
+    // It's good practice to keep our Ajax request as slim as possible
+    // The .limit method limits to a number (in this case 10) closest results
+    const stores = await Store.find(q).select('slug name description location').limit(10);
+    res.json(stores);
+};
