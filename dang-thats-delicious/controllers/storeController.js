@@ -44,7 +44,7 @@ exports.resize = async (req, res, next) => {
 };
 
 exports.createStore = async (req, res) => {
-    req.body.author = req.user._id; // Take the ID of currently logged-in user and put it into the 'author' field
+    req.body.author = req.user._id; // Take the ID of currently logged-in user and put it into the 'author' field    
     const store = await (new Store(req.body)).save();
     req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`);
     res.redirect(`/store/${store.slug}`);
@@ -53,7 +53,7 @@ exports.createStore = async (req, res) => {
 
 exports.getStores = async (req, res) => {
     // Query the database for a list of all stores
-    const stores = await Store.find();
+    const stores = await Store.find().populate('reviews');
     res.render('stores', { title: 'Stores', stores });
 };
 
@@ -159,4 +159,11 @@ exports.getHearts = async (req, res) => {
         _id: { $in: req.user.hearts }
     });
     res.render('stores', { title: 'Hearted Stores', stores });
+};
+
+exports.getTopStores = async (req, res) => {
+    // It's best practice to keep this complex query as close to the model as possible.
+    // This is why we simply call the method here (the actual work is being done in the model!)
+    const stores = await Store.getTopStores();
+    res.render('topStores', { stores, title: 'Top Stores!' });
 };
