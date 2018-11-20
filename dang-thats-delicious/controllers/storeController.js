@@ -52,9 +52,30 @@ exports.createStore = async (req, res) => {
 };
 
 exports.getStores = async (req, res) => {
+    const page = req.params.page || 1;
+    const limit = 4; // Limit number of stores per page
+    const skip = (page * limit) - limit;
     // Query the database for a list of all stores
-    const stores = await Store.find().populate('reviews');
-    res.render('stores', { title: 'Stores', stores });
+    const storesPromise = Store
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .sort({ created: 'desc' }); // Sort stores with most recently-created first
+
+    const countPromise = Store.count();
+
+    const [stores, count] = await Promise.all([storesPromise, countPromise]); // Await both the above methods at the same time!
+
+    const pages = Math.ceil(count / limit);
+
+    // If someone tries to access page 20 by editing the URL, for example...
+    if (!stores.length && skip) {
+        req.flash('info', `Hey! You asked for page ${page}. But that doesn't exist, so I put you on page ${pages}`);
+        res.redirect(`/stores/page/${pages}`);
+        return;
+    }
+
+    res.render('stores', { title: 'Stores', stores, page, pages, count });
 };
 
 const confirmOwner = (store, user) => {
